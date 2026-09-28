@@ -2,10 +2,20 @@
 name = "run-remote"
 version = "1"
 requires-python = ">=3.10"
+# commands (vraiti/commands) is also required; install it alongside, e.g.
+# uv pip install -e ../commands -e .
 dependencies = [
+    "argcomplete",
+    "boto3",
+    "mypy-boto3-ec2",
+    "mypy-boto3-pricing",
     "pydantic>=2",
     "pyyaml",
 ]
+
+[project.scripts]
+run-remote = "run_remote.main:main"
+recipes = "run_remote.recipes:main"
 
 [dependency-groups]
 dev = [
