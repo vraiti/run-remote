@@ -1,0 +1,18 @@
+sync:
+  vllm:
+  - rsync
+  - site-package-overlay:vllm/vllm
+  vllm-omni:
+  - rsync
+  - git-push
+  vllm-omni-aux:
+  - rsync
+  - git-push
+  d3g:
+  - rsync
+  - git-push
+  python-tracer:
+  - git-push
+dependencies:
+  d3g:
+    python-tracer: bash vllm-omni-aux/utils/rebuild-d3g.sh

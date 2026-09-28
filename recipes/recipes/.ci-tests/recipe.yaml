@@ -1,0 +1,9 @@
+venv:
+  python: '3'
+command:
+- python3
+- test-repo/test.py
+sync:
+  test-repo:
+  - rsync
+  - git-push

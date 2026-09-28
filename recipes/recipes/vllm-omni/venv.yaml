@@ -1,0 +1,7 @@
+venv:
+  python: "3.14"
+  packages:
+  - vllm==0.30.0
+  - -e vllm-omni --no-build-isolation
+  finiCommands:
+  - vllm-omni-aux/utils/install-flashinfer-jit-cache.sh

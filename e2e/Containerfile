@@ -1,0 +1,30 @@
+# Shared image for all three E2E roles (local/git-server/remote) --
+# they all need the same base tools (sshd, git, python3, uv); what differs
+# between roles is purely runtime setup (users, keys, bare repos), done by
+# run-e2e.sh via `podman exec` after the container starts, not baked in
+# here. Root-only (no dedicated non-root users) to keep the harness simple
+# -- this is a disposable, isolated test container, not production.
+FROM fedora:44
+
+RUN dnf install -y \
+        openssh-server \
+        openssh-clients \
+        git \
+        rsync \
+        python3 \
+        python3-pip \
+        procps-ng \
+        which \
+    && dnf clean all \
+    && ssh-keygen -A \
+    && mkdir -p /var/run/sshd \
+    && pip3 install --break-system-packages --no-cache-dir uv pydantic pyyaml argcomplete
+
+# PermitRootLogin/PasswordAuthentication: key-only root login, matching the
+# "everything is root" simplification above.
+RUN sed -i \
+        -e 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' \
+        -e 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' \
+        /etc/ssh/sshd_config
+
+CMD ["sleep", "infinity"]

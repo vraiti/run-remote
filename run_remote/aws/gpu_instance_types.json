@@ -1,0 +1,1310 @@
+{
+  "g4ad.16xlarge": {
+    "cost_per_hour_usd": null,
+    "gpu_count": 4,
+    "gpu_model": "Radeon Pro V520",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 32.0,
+    "regions": [
+      "eu-north-1",
+      "eu-west-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g4ad.2xlarge": {
+    "cost_per_hour_usd": null,
+    "gpu_count": 1,
+    "gpu_model": "Radeon Pro V520",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 8.0,
+    "regions": [
+      "eu-north-1",
+      "eu-west-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g4ad.4xlarge": {
+    "cost_per_hour_usd": null,
+    "gpu_count": 1,
+    "gpu_model": "Radeon Pro V520",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 8.0,
+    "regions": [
+      "eu-north-1",
+      "eu-west-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g4ad.8xlarge": {
+    "cost_per_hour_usd": null,
+    "gpu_count": 2,
+    "gpu_model": "Radeon Pro V520",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "eu-north-1",
+      "eu-west-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g4ad.xlarge": {
+    "cost_per_hour_usd": null,
+    "gpu_count": 1,
+    "gpu_model": "Radeon Pro V520",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 8.0,
+    "regions": [
+      "eu-north-1",
+      "eu-west-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g4dn.12xlarge": {
+    "cost_per_hour_usd": 5.281,
+    "gpu_count": 4,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 64.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g4dn.16xlarge": {
+    "cost_per_hour_usd": 5.875,
+    "gpu_count": 1,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g4dn.2xlarge": {
+    "cost_per_hour_usd": 1.015,
+    "gpu_count": 1,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g4dn.4xlarge": {
+    "cost_per_hour_usd": 1.625,
+    "gpu_count": 1,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g4dn.8xlarge": {
+    "cost_per_hour_usd": 2.938,
+    "gpu_count": 1,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g4dn.metal": {
+    "cost_per_hour_usd": 10.562,
+    "gpu_count": 8,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 128.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g4dn.xlarge": {
+    "cost_per_hour_usd": 0.71,
+    "gpu_count": 1,
+    "gpu_model": "T4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "ap-southeast-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "g5.12xlarge": {
+    "cost_per_hour_usd": 8.22609,
+    "gpu_count": 4,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 89.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.16xlarge": {
+    "cost_per_hour_usd": 5.94042,
+    "gpu_count": 1,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.24xlarge": {
+    "cost_per_hour_usd": 11.81123,
+    "gpu_count": 4,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 89.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.2xlarge": {
+    "cost_per_hour_usd": 1.75776,
+    "gpu_count": 1,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.48xlarge": {
+    "cost_per_hour_usd": 23.62246,
+    "gpu_count": 8,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 178.8,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.4xlarge": {
+    "cost_per_hour_usd": 2.35528,
+    "gpu_count": 1,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.8xlarge": {
+    "cost_per_hour_usd": 3.55033,
+    "gpu_count": 1,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5.xlarge": {
+    "cost_per_hour_usd": 1.459,
+    "gpu_count": 1,
+    "gpu_model": "A10G",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g5g.16xlarge": {
+    "cost_per_hour_usd": 3.7039,
+    "gpu_count": 2,
+    "gpu_model": "T4g",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 32.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "g5g.2xlarge": {
+    "cost_per_hour_usd": 0.7505,
+    "gpu_count": 1,
+    "gpu_model": "T4g",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "g5g.4xlarge": {
+    "cost_per_hour_usd": 1.1176,
+    "gpu_count": 1,
+    "gpu_model": "T4g",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "g5g.8xlarge": {
+    "cost_per_hour_usd": 1.8519,
+    "gpu_count": 1,
+    "gpu_model": "T4g",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "g5g.metal": {
+    "cost_per_hour_usd": 3.7039,
+    "gpu_count": 2,
+    "gpu_model": "T4g",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 32.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "g5g.xlarge": {
+    "cost_per_hour_usd": 0.5669,
+    "gpu_count": 1,
+    "gpu_model": "T4g",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 16.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "g6.12xlarge": {
+    "cost_per_hour_usd": 6.67369,
+    "gpu_count": 4,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 89.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.16xlarge": {
+    "cost_per_hour_usd": 4.92637,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.24xlarge": {
+    "cost_per_hour_usd": 9.68103,
+    "gpu_count": 4,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 89.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.2xlarge": {
+    "cost_per_hour_usd": 1.41781,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.48xlarge": {
+    "cost_per_hour_usd": 19.36206,
+    "gpu_count": 8,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 178.8,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.4xlarge": {
+    "cost_per_hour_usd": 1.91903,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.8xlarge": {
+    "cost_per_hour_usd": 2.92148,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6.xlarge": {
+    "cost_per_hour_usd": 1.1672,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.12xlarge": {
+    "cost_per_hour_usd": 15.21742,
+    "gpu_count": 4,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 178.8,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.16xlarge": {
+    "cost_per_hour_usd": 10.98917,
+    "gpu_count": 1,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 44.7,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.24xlarge": {
+    "cost_per_hour_usd": 21.84956,
+    "gpu_count": 4,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 178.8,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.2xlarge": {
+    "cost_per_hour_usd": 3.25168,
+    "gpu_count": 1,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 44.7,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.48xlarge": {
+    "cost_per_hour_usd": 43.69912,
+    "gpu_count": 8,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 357.6,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.4xlarge": {
+    "cost_per_hour_usd": 4.35703,
+    "gpu_count": 1,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 44.7,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.8xlarge": {
+    "cost_per_hour_usd": 6.56775,
+    "gpu_count": 1,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 44.7,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6e.xlarge": {
+    "cost_per_hour_usd": 2.699,
+    "gpu_count": 1,
+    "gpu_model": "L40S",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 44.7,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-northeast-3",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6f.2xlarge": {
+    "cost_per_hour_usd": 0.68888,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": 0.25,
+    "gpu_vram_gib": 5.6,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6f.4xlarge": {
+    "cost_per_hour_usd": 1.37776,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": 0.5,
+    "gpu_vram_gib": 11.2,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6f.large": {
+    "cost_per_hour_usd": 0.29296,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": 0.125,
+    "gpu_vram_gib": 2.8,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g6f.xlarge": {
+    "cost_per_hour_usd": 0.34444,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": 0.125,
+    "gpu_vram_gib": 2.8,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7.12xlarge": {
+    "cost_per_hour_usd": 7.12832,
+    "gpu_count": 2,
+    "gpu_model": "RTX PRO 4500",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 64.0,
+    "regions": [
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7.24xlarge": {
+    "cost_per_hour_usd": 14.25664,
+    "gpu_count": 4,
+    "gpu_model": "RTX PRO 4500",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 128.0,
+    "regions": [
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7.2xlarge": {
+    "cost_per_hour_usd": 2.52,
+    "gpu_count": 1,
+    "gpu_model": "RTX PRO 4500",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 32.0,
+    "regions": [
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7.48xlarge": {
+    "cost_per_hour_usd": 28.51328,
+    "gpu_count": 8,
+    "gpu_model": "RTX PRO 4500",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 256.0,
+    "regions": [
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7.4xlarge": {
+    "cost_per_hour_usd": 3.04208,
+    "gpu_count": 1,
+    "gpu_model": "RTX PRO 4500",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 32.0,
+    "regions": [
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7.8xlarge": {
+    "cost_per_hour_usd": 4.08624,
+    "gpu_count": 1,
+    "gpu_model": "RTX PRO 4500",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 32.0,
+    "regions": [
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7e.12xlarge": {
+    "cost_per_hour_usd": 12.01727,
+    "gpu_count": 2,
+    "gpu_model": "RTX PRO Server 6000",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 192.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7e.24xlarge": {
+    "cost_per_hour_usd": 24.03454,
+    "gpu_count": 4,
+    "gpu_model": "RTX PRO Server 6000",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 384.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7e.2xlarge": {
+    "cost_per_hour_usd": 4.87752,
+    "gpu_count": 1,
+    "gpu_model": "RTX PRO Server 6000",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 96.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7e.48xlarge": {
+    "cost_per_hour_usd": 48.06908,
+    "gpu_count": 8,
+    "gpu_model": "RTX PRO Server 6000",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 768.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7e.4xlarge": {
+    "cost_per_hour_usd": 5.79852,
+    "gpu_count": 1,
+    "gpu_model": "RTX PRO Server 6000",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 96.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "g7e.8xlarge": {
+    "cost_per_hour_usd": 7.64051,
+    "gpu_count": 1,
+    "gpu_model": "RTX PRO Server 6000",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 96.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "gr6.4xlarge": {
+    "cost_per_hour_usd": 2.2323,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "gr6.8xlarge": {
+    "cost_per_hour_usd": 3.54801,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 22.4,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "eu-west-3",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "gr6f.4xlarge": {
+    "cost_per_hour_usd": 1.54602,
+    "gpu_count": 1,
+    "gpu_model": "L4",
+    "gpu_partition_size": 0.5,
+    "gpu_vram_gib": 11.2,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "p3dn.24xlarge": {
+    "cost_per_hour_usd": 42.783,
+    "gpu_count": 8,
+    "gpu_model": "V100",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 256.0,
+    "regions": [
+      "ap-northeast-1",
+      "eu-west-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "p4d.24xlarge": {
+    "cost_per_hour_usd": 30.09784,
+    "gpu_count": 8,
+    "gpu_model": "A100",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 320.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-central-1",
+      "eu-north-1",
+      "eu-west-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "p4de.24xlarge": {
+    "cost_per_hour_usd": 37.6223,
+    "gpu_count": 8,
+    "gpu_model": "A100",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 640.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-southeast-1",
+      "eu-central-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  },
+  "p5.48xlarge": {
+    "cost_per_hour_usd": 68.8,
+    "gpu_count": 8,
+    "gpu_model": "H100",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 640.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "ap-southeast-2",
+      "ca-central-1",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "p5.4xlarge": {
+    "cost_per_hour_usd": 8.6,
+    "gpu_count": 1,
+    "gpu_model": "H100",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 80.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-south-1",
+      "ap-southeast-2",
+      "eu-north-1",
+      "eu-west-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "p5en.48xlarge": {
+    "cost_per_hour_usd": 79.12,
+    "gpu_count": 8,
+    "gpu_model": "H200",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 1128.0,
+    "regions": [
+      "ap-northeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+      "eu-north-1",
+      "us-east-1",
+      "us-east-2",
+      "us-west-1",
+      "us-west-2"
+    ]
+  },
+  "p6-b200.48xlarge": {
+    "cost_per_hour_usd": 160.64525,
+    "gpu_count": 8,
+    "gpu_model": "B200",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 1432.5,
+    "regions": [
+      "ap-south-1",
+      "eu-north-1",
+      "eu-west-3",
+      "us-east-1",
+      "us-east-2",
+      "us-west-2"
+    ]
+  },
+  "p6-b300.48xlarge": {
+    "cost_per_hour_usd": 209.1735,
+    "gpu_count": 8,
+    "gpu_model": "B300",
+    "gpu_partition_size": null,
+    "gpu_vram_gib": 2148.8,
+    "regions": [
+      "ap-northeast-2",
+      "sa-east-1",
+      "us-east-1",
+      "us-west-2"
+    ]
+  }
+}

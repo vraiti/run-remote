@@ -1,0 +1,3 @@
+include: vllm-omni/base
+command:
+- vllm-omni-aux/utils/pytest.sh

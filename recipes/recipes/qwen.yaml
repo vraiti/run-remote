@@ -1,0 +1,14 @@
+command:
+- vllm-omni-aux/utils/deploy.py
+- qwen3-omni
+- 1gpu.yaml
+sync:
+  vllm:
+  - rsync
+  - site-package-overlay:vllm/vllm
+  vllm-omni:
+  - rsync
+  - git-push
+  vllm-omni-aux:
+  - rsync
+  - git-push

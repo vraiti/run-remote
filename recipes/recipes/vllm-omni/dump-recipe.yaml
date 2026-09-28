@@ -1,0 +1,13 @@
+venv:
+  python: '3.12'
+  packages:
+  - pyyaml
+command:
+- vllm-omni-aux/utils/dump-recipe.py
+sync:
+  vllm-omni:
+  - rsync
+  - git-push
+  vllm-omni-aux:
+  - rsync
+  - git-push

@@ -1,0 +1,15 @@
+command:
+- vllm-omni-aux/utils/deploy.py
+- qwen3-omni
+- 1gpu.yaml
+- --client=vllm-omni-aux/clients/livekit_replay_client.sh
+sync:
+  vllm:
+  - rsync
+  - site-package-overlay:vllm/vllm
+  vllm-omni:
+  - rsync
+  - git-push
+  vllm-omni-aux:
+  - rsync
+  - git-push

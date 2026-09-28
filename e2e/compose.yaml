@@ -1,0 +1,44 @@
+name: run-remote-e2e
+
+# Three services on one compose-managed network, all built from the same
+# image (see Containerfile) -- container_name is set explicitly on each so
+# the pytest harness can `podman exec` them by a known, fixed name instead
+# of guessing podman-compose's own naming scheme. Names match production:
+# "local" (the dev machine) and "dev" (the remote host a recipe targets,
+# same alias hostresolve.py resolves for real) -- "git-server" is
+# infrastructure the real setup doesn't have, so it keeps a descriptive name
+# instead. Compose gives each service its own name as a resolvable DNS
+# hostname on the shared network for free, so local can reach git-server/dev
+# by name with no extra networking setup.
+#
+# init: true matters a lot here: `sleep infinity` runs as each container's
+# PID 1, and the kernel suppresses the default terminate-on-SIGTERM action
+# specifically for PID 1 processes that never install their own handler --
+# `sleep` never does, so without a real init process forwarding/reaping
+# signals, `podman stop`/`compose down` has to wait out its full 10s
+# per-container grace period and then SIGKILL, three times, every teardown
+# (confirmed: that alone was ~31s of a ~42s test run).
+services:
+  local:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: local
+    init: true
+    command: ["sleep", "infinity"]
+
+  git-server:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: git-server
+    init: true
+    command: ["sleep", "infinity"]
+
+  dev:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: dev
+    init: true
+    command: ["sleep", "infinity"]

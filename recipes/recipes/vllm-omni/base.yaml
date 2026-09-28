@@ -1,0 +1,32 @@
+envvars:
+- VLLM_OMNI_VERSION_OVERRIDE=0.0.0
+instanceFilters:
+- regions:
+  - us-*
+  - eu-*
+  - ca-*
+  maxHourlyCost: 5
+  instanceTypes:
+  - g7e.2xlarge
+venv:
+  python: "3.12"
+  packages:
+  - vllm==0.29.0
+  - setuptools_scm
+  - -e vllm-omni[dev] --no-build-isolation
+  finiCommands:
+  - vllm-omni-aux/utils/ensure-nv-cache-artifact-link.sh
+  - vllm-omni-aux/utils/ensure-dlami-link.sh
+  - vllm-omni-aux/utils/install-flashinfer-jit-cache.sh
+sync:
+  vllm:
+  - rsync
+  - site-package-overlay:vllm/vllm
+  vllm-omni:
+  - rsync
+  - git-push
+  vllm-omni-aux:
+  - rsync
+  - git-push
+  nv-cache-artifact:
+  - remote-artifact:quay.io/vraiti/run-remote:ec2-nv-compute-cache

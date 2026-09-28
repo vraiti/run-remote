@@ -1,0 +1,106 @@
+# E2E: Qwen3-Omni on vLLM-Omni /v1/live/sessions (branch feat/live-sessions),
+# driven by LiveKit GPTLiveModel in a headless AgentSession
+# (vllm-omni/examples/online_serving/live_sessions/livekit/headless.py).
+#   run-remote vllm-omni/live-sessions/qwen-e2e-test
+#
+# The four commands run in parallel; the job ends when the first one exits
+# (normally the client, after its scenarios), which stops the servers. The
+# client renders the Piper utterances on CPU while the servers start, so TTS
+# never runs during a conversation. Qwen waits for Whisper to be healthy:
+# two vLLM engines profiling one GPU at the same time misread free memory.
+# Scenario artifacts: /tmp/logs/live-e2e/<timestamp>/<scenario>/ on the instance.
+#
+# Standalone rather than `include: vllm-omni/base`: base pins vllm 0.29 plus
+# the local vllm site-package overlay, and feat/live-sessions (from
+# origin/main) needs vllm 0.30. The client has its own venv because
+# livekit-agents pins openai<3 and the server needs openai>=3.18.
+envvars:
+- VLLM_OMNI_VERSION_OVERRIDE=0.0.0
+instanceFilters:
+- regions:
+  - us-*
+  - eu-*
+  - ca-*
+  maxHourlyCost: 5
+  instanceTypes:
+  - g7e.2xlarge
+venv:
+  python: "3.14"
+  packages:
+  - vllm==0.30.0
+  - setuptools_scm
+  - -e vllm-omni --no-build-isolation
+  finiCommands:
+  - vllm-omni-aux/utils/ensure-nv-cache-artifact-link.sh
+  - vllm-omni-aux/utils/ensure-dlami-link.sh
+  - vllm-omni-aux/utils/install-flashinfer-jit-cache.sh
+venvs:
+  client:
+    python: "3.12"
+    packages:
+    - livekit-agents==1.8.3
+    - livekit-plugins-openai==1.8.3
+    - piper-tts
+sync:
+  # rsync only: feat/live-sessions tracks origin (vllm-project/vllm-omni), so
+  # git-push would push AUTOCOMMIT/feat/live-sessions upstream.
+  vllm-omni:
+  - rsync
+  vllm-omni-aux:
+  - rsync
+  - git-push
+  nv-cache-artifact:
+  - remote-artifact:quay.io/vraiti/run-remote:ec2-nv-compute-cache
+# vllm_omni call tracing (vllm_omni/__init__.py): per-(pid, thread, coroutine)
+# call logs under /tmp/logs/call-trace/ on the instance.
+env:
+  RUN_REMOTE_CALL_TRACE: "1"
+# Leftovers from an earlier run on a reused instance, and its call traces.
+initializer: pkill -9 -f "[v]llm serve" ; pkill -9 -f "[l]ive_vad_service" ; rm -rf /tmp/logs/call-trace ; sleep 2 ; true
+commands:
+# Silero VAD service (CPU).
+- command:
+  - bash
+  - -c
+  - CUDA_VISIBLE_DEVICES= exec python -m vllm_omni.entrypoints.live_vad_service --port 15151
+# Whisper ASR service.
+- command:
+  - vllm
+  - serve
+  - openai/whisper-large-v3-turbo
+  - --port
+  - "15152"
+  - --gpu-memory-utilization
+  - "0.08"
+  - --enforce-eager
+# Qwen3-Omni, once Whisper holds its GPU memory.
+- command:
+  - bash
+  - -c
+  - |
+    until curl -sf http://127.0.0.1:15152/health >/dev/null; do sleep 2; done
+    exec vllm serve Qwen/Qwen3-Omni-30B-A3B-Instruct --omni --port 8000 \
+      --deploy-config vllm-omni-aux/deploy-configs/qwen3-omni/live-1gpu.yaml \
+      --enable-auto-tool-choice --tool-call-parser hermes
+# Client: TTS on CPU now, scenarios once every server is healthy.
+- venv: client
+  command:
+  - bash
+  - -c
+  - |
+    set -u
+    EX=vllm-omni/examples/online_serving/live_sessions/livekit
+    OUT=/tmp/logs/live-e2e/$(date +%Y%m%d-%H%M%S)
+    CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 nice -n 10 \
+      python $EX/piper_utterances.py --voice-dir "$HOME/.cache/piper-voices" || exit 1
+    for port in 15151 15152 8000; do
+      timeout 2700 bash -c "until curl -sf http://127.0.0.1:$port/health >/dev/null; do sleep 5; done" \
+        || { echo "server on :$port never became healthy"; exit 1; }
+    done
+    rc=0
+    for scenario in single conversation barge_in tools; do
+      python $EX/headless.py --model Qwen/Qwen3-Omni-30B-A3B-Instruct --voice ethan \
+        --scenario $scenario --out $OUT/$scenario || rc=1
+    done
+    echo "artifacts: $OUT"
+    exit $rc

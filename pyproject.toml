@@ -1,0 +1,59 @@
+[project]
+name = "run-remote"
+version = "1"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2",
+    "pyyaml",
+]
+
+[dependency-groups]
+dev = [
+    "mypy",
+    "pyright",
+    "pylint",
+    "types-pyyaml",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["run_remote", "run_remote.aws"]
+
+[tool.mypy]
+python_version = "3.10"
+mypy_path = "run_remote"
+explicit_package_bases = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+check_untyped_defs = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = "argcomplete"
+ignore_missing_imports = true
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+extraPaths = ["run_remote", ".."]
+reportMissingImports = true
+reportUnnecessaryTypeIgnoreComment = true
+
+[tool.pylint.main]
+init-hook = "import sys; sys.path[0:0] = ['run_remote', '.']"
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "invalid-name",          # short/terse names (kv, sha, e, f) are used deliberately throughout
+    "too-few-public-methods",
+    "redefined-outer-name",  # pytest fixtures are meant to shadow by name -- this fires on every one used as a test param
+]
+good-names = ["e", "f", "i", "kv"]
+
+[tool.pylint.format]
+max-line-length = 120  # this codebase favors longer, fully-explained comments over hard-wrapping them

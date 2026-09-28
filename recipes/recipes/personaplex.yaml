@@ -1,0 +1,16 @@
+command:
+- vllm-omni-aux/utils/deploy.py
+- personaplex
+- 1gpu.yaml
+- -i
+sync:
+  vllm:
+  - rsync
+  - site-package-overlay:vllm/vllm
+  vllm-omni:
+  - rsync
+  - git-push
+  vllm-omni-aux:
+  - rsync
+  - git-push
+initializer: vllm-omni-aux/utils/clean-traces.sh
