@@ -1,6 +1,6 @@
-include: vllm-omni/base
+include: vllm-omni/base-2gpu
 command:
 - vllm-omni-aux/utils/deploy.py
 - qwen3-omni
-- 1gpu.yaml
+- 2gpu.yaml
 - --client=vllm-omni-aux/clients/livekit_replay_client.sh

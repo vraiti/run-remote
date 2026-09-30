@@ -1,9 +1,7 @@
-include: vllm-omni/base
+include: vllm-omni/base-2gpu
 command:
 - vllm-omni-aux/utils/pytest.sh
-- -v
-- --run-level
-- advanced_model
-- tests/entrypoints/openai_api/test_qwen3_omni_realtime_websocket.py
-- -k
-- livekit_client_vad_replay
+- -s 
+- -v 
+- tests/entrypoints/openai_api/test_qwen3_omni_realtime_websocket.py::TestQwen3OmniRealtimeWebSocket::test_livekit_client_vad_replay 
+- --run-level=advanced_model
