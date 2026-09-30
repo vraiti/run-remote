@@ -1,13 +1,21 @@
-# E2E: Qwen3-Omni on vLLM-Omni /v1/live/sessions (branch feat/live-sessions),
-# driven by LiveKit GPTLiveModel in a headless AgentSession
-# (vllm-omni/examples/online_serving/live_sessions/livekit/headless.py).
-#   run-remote vllm-omni/live-sessions/qwen-e2e-test
+# Reference (debugging): MiniCPM-o 4.5 on /v1/realtime?duplex=1 (the
+# OmniDuplexSessionHandler stack), greedy on thinker and Talker, fed the exact
+# user audio of minicpmo-e2e-test's scenarios
+# (vllm-omni-aux/clients/minicpmo-compare/<scenario>_16k.wav) with the
+# checkpoint's HT_ref_audio.wav voice, as /v1/live/sessions uses. Text and
+# audio per scenario: /tmp/logs/duplex-ref/greedy/<scenario>/ (result.json,
+# output.wav).
+#   run-remote vllm-omni/live-sessions/minicpmo-duplex-reference
 #
-# The four commands run in parallel; the job ends when the first one exits
-# (normally the client, after its scenarios), which stops the servers. The
-# client renders the Piper utterances on CPU while the servers start, so TTS
-# never runs during a conversation. Qwen waits for Whisper to be healthy:
-# two vLLM engines profiling one GPU at the same time misread free memory.
+# The rest of this header describes minicpmo-e2e-test, whose venvs, sync
+# and initializer this recipe shares:
+# Same layout as qwen-e2e-test, minus the VAD service: MiniCPM-o uses native
+# VAD (the model decides when to listen or speak). Whisper still supplies
+# input transcripts. No tools (MiniCPM-o's Live processor has none) and only
+# the default voice. The three commands run in parallel; the job ends when
+# the first one exits (normally the client, after its scenarios). MiniCPM-o
+# waits for Whisper to be healthy: two vLLM engines profiling one GPU at the
+# same time misread free memory.
 # Scenario artifacts: /tmp/logs/live-e2e/<timestamp>/<scenario>/ on the instance.
 #
 # Standalone rather than `include: vllm-omni/base`: base pins vllm 0.29 plus
@@ -30,6 +38,9 @@ venv:
   - vllm==0.30.0
   - setuptools_scm
   - -e vllm-omni --no-build-isolation
+  # MiniCPM-o's Token2Wav stage (hyperpyyaml, flashcosyvoice); vllm-omni only
+  # lists it in its dev extra.
+  - step-audio2==1.0.0
   finiCommands:
   - vllm-omni-aux/utils/ensure-nv-cache-artifact-link.sh
   - vllm-omni-aux/utils/ensure-dlami-link.sh
@@ -68,49 +79,33 @@ env:
 # recreate them (the venv finiCommands only run when the venv is built).
 initializer: pkill -9 -f "[v]llm serve" ; pkill -9 -f "[l]ive_vad_service" ; nvidia-smi --query-compute-apps=pid --format=csv,noheader | xargs -r kill -9 ; for i in $(seq 30); do [ -z "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ] && break; sleep 1; done ; rm -rf /tmp/logs/call-trace ; vllm-omni-aux/utils/ensure-nv-cache-artifact-link.sh ; sleep 2 ; true
 commands:
-# Silero VAD service (CPU).
-- command:
-  - bash
-  - -c
-  - CUDA_VISIBLE_DEVICES= exec python -m vllm_omni.entrypoints.live_vad_service --port 15151
-# Whisper ASR service.
-- command:
-  - vllm
-  - serve
-  - openai/whisper-large-v3-turbo
-  - --port
-  - "15152"
-  - --gpu-memory-utilization
-  - "0.08"
-  - --enforce-eager
-# Qwen3-Omni, once Whisper holds its GPU memory.
+# MiniCPM-o 4.5, upstream duplex deploy config with a greedy Talker.
 - command:
   - bash
   - -c
   - |
-    until curl -sf http://127.0.0.1:15152/health >/dev/null; do sleep 2; done
-    exec vllm serve Qwen/Qwen3-Omni-30B-A3B-Instruct --omni --port 8000 \
-      --deploy-config vllm-omni-aux/deploy-configs/qwen3-omni/live-1gpu.yaml \
-      --enable-auto-tool-choice --tool-call-parser hermes
-# Client: TTS on CPU now, scenarios once every server is healthy.
-- venv: client
-  command:
+    exec vllm serve openbmb/MiniCPM-o-4_5 --omni --trust-remote-code --port 8099 \
+      --deploy-config vllm-omni-aux/deploy-configs/minicpm-o/duplex-greedy.yaml
+# Client: the repo's /v1/realtime duplex demo, one session per scenario,
+# stage 0 at temperature 0.
+- command:
   - bash
   - -c
   - |
     set -u
-    EX=vllm-omni/examples/online_serving/live_sessions/livekit
-    OUT=/tmp/logs/live-e2e/$(date +%Y%m%d-%H%M%S)
-    CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 nice -n 10 \
-      python $EX/piper_utterances.py --voice-dir "$HOME/.cache/piper-voices" || exit 1
-    for port in 15151 15152 8000; do
-      timeout 2700 bash -c "until curl -sf http://127.0.0.1:$port/health >/dev/null; do sleep 5; done" \
-        || { echo "server on :$port never became healthy"; exit 1; }
-    done
+    timeout 2700 bash -c "until curl -sf http://127.0.0.1:8099/health >/dev/null; do sleep 5; done" \
+      || { echo "server never became healthy"; exit 1; }
+    REF=$(python -c "from huggingface_hub import hf_hub_download; print(hf_hub_download('openbmb/MiniCPM-o-4_5', 'assets/HT_ref_audio.wav'))")
+    OUT=/tmp/logs/duplex-ref/greedy
+    rm -rf "$OUT"
+    mkdir -p /tmp/logs/duplex-ref
     rc=0
-    for scenario in single conversation barge_in tools; do
-      python $EX/headless.py --model Qwen/Qwen3-Omni-30B-A3B-Instruct --voice ethan \
-        --scenario $scenario --out $OUT/$scenario || rc=1
+    for scenario in single conversation barge_in native; do
+      python vllm-omni/examples/online_serving/minicpmo/realtime_duplex_demo.py \
+        --url "ws://127.0.0.1:8099/v1/realtime?duplex=1" --model openbmb/MiniCPM-o-4_5 \
+        --input-wav vllm-omni-aux/clients/minicpmo-compare/${scenario}_16k.wav \
+        --ref-audio "$REF" --temperature 0 --timeout-s 180 \
+        --output-dir "$OUT/$scenario" > "$OUT.$scenario.log" 2>&1 || rc=1
+      python -c "import json,sys; r=json.load(open('$OUT/$scenario/result.json')); print('$scenario', r.get('ok'), repr(r.get('transcript')))" || rc=1
     done
-    echo "artifacts: $OUT"
     exit $rc
