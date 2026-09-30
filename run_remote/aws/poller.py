@@ -115,7 +115,10 @@ def _try_launch(
         ami_id, root_device_name = ec2.find_rhel10_ami(client)
 
     mappings: list[BlockDeviceMappingTypeDef] = [
-        {"DeviceName": root_device_name, "Ebs": {"VolumeSize": config.ROOT_VOLUME_SIZE, "VolumeType": "gp3"}}
+        {
+            "DeviceName": root_device_name,
+            "Ebs": {"VolumeSize": config.ROOT_VOLUME_SIZE, "VolumeType": "gp3", "DeleteOnTermination": True},
+        }
     ]
     instance_id = ec2.try_run_instance(region, ami_id, instance_type, group_id, alias, tag_name, mappings)
     if instance_id is None:

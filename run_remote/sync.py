@@ -6,18 +6,16 @@ from __future__ import annotations
 
 import hashlib
 import os
-import shutil
 import subprocess
 import tempfile
+from contextlib import contextmanager
 from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
-from typing import Callable, NamedTuple
+from typing import Callable, Iterator, NamedTuple
 
-from content_hash import content_hash as _artifact_content_hash
 from models import Profile
 
 from commands import git as gitw
-from commands import oras
 from commands import rsync as rsyncw
 from commands import ssh as sshw
 
@@ -188,8 +186,8 @@ def _sync_one_repo(alias: str, remote_root: str, repo_name: str, repo_dir: str, 
 
 def check_sync_dirs_exist(project_dir: str, profile: Profile) -> None:
     """remote-artifact entries are exempt -- they're pulled fresh (or
-    created empty) every run by prepare_artifacts, never required to
-    pre-exist."""
+    created empty) on the remote every run by prepare_artifacts, and never
+    exist locally."""
     for entry in _sync_entries(profile, project_dir):
         if entry.storage_uri is None and not os.path.isdir(entry.local_dir):
             raise RuntimeError(f"{entry.local_dir} does not exist")
@@ -243,120 +241,126 @@ def sync_all(alias: str, remote_root: str, project_dir: str, profile: Profile, *
                 print(f"git push ({repo_name}) FAILED: {e}")
 
 
-def _remote_content_hash(alias: str, remote_toolset_dir: str, remote_dir: str) -> str:
-    """Runs content_hash.py's own algorithm on the remote, over one ssh
-    round trip -- stdlib-only, so it works under the remote's bare system
-    python3 without needing `uv run`. Excludes the .rrr-synced-commit
-    marker _sync_one_repo writes there, so a repo the job never touched
-    still compares equal to the local copy (which never has that file)."""
-    script = f"{remote_toolset_dir}/{REMOTE_PACKAGE_DIR}/content_hash.py"
-    result = sshw.run(alias, f"python3 {sshw.quote(script)} {sshw.quote(remote_dir)} --exclude .rrr-synced-commit")
-    return result.stdout.strip()
-
-
 def _local_registry_auth() -> str | None:
     path = os.environ.get("REGISTRY_AUTH_FILE")
     return path if path and os.path.isfile(path) else None
 
 
+REMOTE_REGISTRY_AUTH = "/tmp/run-remote-registry-auth.json"
+
+
+@contextmanager
+def _remote_registry_auth(alias: str) -> Iterator[str | None]:
+    """Copies the operator's local $REGISTRY_AUTH_FILE (same convention
+    skopeo/podman/buildah already use) to the remote for the duration of
+    one oras call, and removes it again afterward."""
+    local = _local_registry_auth()
+    if local is None:
+        yield None
+        return
+    sshw.run(
+        alias,
+        f"umask 077 && cat > {sshw.quote(REMOTE_REGISTRY_AUTH)}",
+        input=Path(local).read_text(encoding="utf-8"),
+    )
+    try:
+        yield REMOTE_REGISTRY_AUTH
+    finally:
+        sshw.run(alias, f"rm -f {sshw.quote(REMOTE_REGISTRY_AUTH)}", check=False)
+
+
+def _run_remote_artifact(alias: str, remote_toolset_dir: str, args: list[str], registry_config: str | None) -> str:
+    script = f"{remote_toolset_dir}/{REMOTE_PACKAGE_DIR}/artifact.py"
+    argv = ["python3", script, *args]
+    if registry_config is not None:
+        argv += ["--registry-config", registry_config]
+    result = sshw.run(alias, " ".join(sshw.quote(a) for a in argv))
+    return result.stdout.strip().splitlines()[-1]
+
+
 def prepare_artifacts(
-    alias: str, remote_root: str, project_dir: str, profile: Profile, *, quiet: bool = False
+    alias: str, remote_root: str, remote_toolset_dir: str, profile: Profile, *, quiet: bool = False
 ) -> dict[str, str]:
-    """For every remote-artifact sync entry: wipes any local leftover of its
-    directory, pulls storageUri's tar into it (or leaves it empty if
-    storageUri doesn't exist yet), rsyncs the result up to the remote (not
-    routed through sync_all -- remote-artifact entries are exclusive of the
-    rsync flag), and returns {local_dir: baseline_content_hash} for
-    sync_artifacts_back to diff against once the job has run. The directory
-    is pure scratch for the duration of this one run -- storageUri, not the
-    local directory, is the only durable state -- so this always starts
-    from a clean pull, never trusting whatever happens to already be on
-    disk."""
+    """For every remote-artifact sync entry: on the remote, wipes its
+    directory and pulls storageUri's tar into it (or leaves it empty if
+    storageUri doesn't exist yet) -- nothing is pulled locally. Returns
+    {entry name: baseline_content_hash} for sync_artifacts_back to diff
+    against once the job has run."""
 
     def log(*args: object) -> None:
         if not quiet:
             print(*args)
 
-    auths_file = _local_registry_auth()
     baseline: dict[str, str] = {}
-    for entry in _sync_entries(profile, project_dir):
-        if entry.storage_uri is None:
+    for name, target in profile.sync.items():
+        if target.remote_artifact is None:
             continue
-        shutil.rmtree(entry.local_dir, ignore_errors=True)
-        log(f"Pulling {entry.storage_uri} -> {entry.local_dir}...")
-        oras.pull(entry.storage_uri, entry.local_dir, registry_config=auths_file)
-        baseline[entry.local_dir] = _artifact_content_hash(entry.local_dir)
-        log(f"Syncing {entry.name}...")
-        rsyncw.sync(entry.local_dir, alias, f"{remote_root}/{entry.name}", exclude=[".rrr-synced-commit"])
+        remote_dir = f"{remote_root}/{name}"
+        log(f"Pulling {target.remote_artifact} -> {alias}:{remote_dir}...")
+        with _remote_registry_auth(alias) as auth:
+            baseline[name] = _run_remote_artifact(
+                alias, remote_toolset_dir, ["pull", target.remote_artifact, remote_dir], auth
+            )
     return baseline
 
 
-def _remove_artifact_dirs(project_dir: str, profile: Profile) -> None:
-    for entry in _sync_entries(profile, project_dir):
-        if entry.storage_uri is not None:
-            shutil.rmtree(entry.local_dir, ignore_errors=True)
+REMOTE_LOGS_DIR = "/tmp/logs"
 
 
-# pylint: disable-next=too-many-arguments,too-many-locals,too-many-positional-arguments
+def pull_logs(alias: str, local_root: str, *, quiet: bool = False) -> None:
+    """Copies the remote's /tmp/logs into <local_root>/run-remote/tmp/logs,
+    overwriting files that already exist there and keeping any the remote no
+    longer has. A failed pull only warns: the job's own result stands."""
+    local_dir = os.path.join(local_root, "run-remote", "tmp", "logs")
+    os.makedirs(local_dir, exist_ok=True)
+    if not quiet:
+        print(f"Pulling {REMOTE_LOGS_DIR} into {local_dir}...")
+    try:
+        rsyncw.pull(alias, REMOTE_LOGS_DIR, local_dir, delete=False)
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        print(f"WARNING: failed to pull {REMOTE_LOGS_DIR} from {alias}: {e}")
+
+
 def sync_artifacts_back(
     alias: str,
     remote_root: str,
     remote_toolset_dir: str,
-    project_dir: str,
     profile: Profile,
     baseline_hashes: dict[str, str],
     *,
     quiet: bool = False,
 ) -> None:
-    """After the job has run, checks each remote-artifact sync entry's
-    remote content hash (one cheap ssh round trip, no data transfer)
-    against the baseline prepare_artifacts recorded before the job started
-    -- only if they differ does it pull the remote directory down, pack it
-    into an OCI artifact, and push it to storageUri (authenticated via the
-    operator's own local $REGISTRY_AUTH_FILE, same convention skopeo/podman/
-    buildah already use). The local directory is deleted again afterward
-    either way -- storageUri is the only state meant to survive past this
-    one run."""
+    """After the job has run, for each remote-artifact sync entry: on the
+    remote, re-hashes its directory against the baseline prepare_artifacts
+    recorded and, only if it differs, packs it into an OCI artifact and
+    pushes it to storageUri straight from the remote."""
 
     def log(*args: object) -> None:
         if not quiet:
             print(*args)
 
-    try:
-        for entry in _sync_entries(profile, project_dir):
-            if entry.storage_uri is None:
-                continue
-            remote_dir = f"{remote_root}/{entry.name}"
-            baseline = baseline_hashes.get(entry.local_dir)
-
-            remote_hash = _remote_content_hash(alias, remote_toolset_dir, remote_dir)
-            if remote_hash == baseline:
-                log(f"{entry.name} unchanged on remote, skipping pull")
-                continue
-
-            log(f"Pulling back {entry.name} from remote...")
-            rsyncw.pull(alias, remote_dir, entry.local_dir, exclude=[".rrr-synced-commit"])
-
-            after = _artifact_content_hash(entry.local_dir)
-            if after == baseline:
-                log(f"{entry.name} unchanged, not pushing")
-                continue
-
-            auths_file = _local_registry_auth()
-            if auths_file is None:
-                print(
-                    f"WARNING: {entry.name} changed but no $REGISTRY_AUTH_FILE set, "
-                    f"skipping push to {entry.storage_uri}"
+    for name, target in profile.sync.items():
+        if target.remote_artifact is None:
+            continue
+        if _local_registry_auth() is None:
+            print(f"WARNING: no $REGISTRY_AUTH_FILE set, skipping change check/push of {name}")
+            continue
+        remote_dir = f"{remote_root}/{name}"
+        try:
+            with _remote_registry_auth(alias) as auth:
+                status = _run_remote_artifact(
+                    alias,
+                    remote_toolset_dir,
+                    ["push", target.remote_artifact, remote_dir, baseline_hashes.get(name, "")],
+                    auth,
                 )
-                continue
-
-            log(f"{entry.name} changed, pushing to {entry.storage_uri}...")
-            try:
-                oras.push(entry.local_dir, entry.storage_uri, after, registry_config=auths_file)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                # One artifact's push failing shouldn't fail an otherwise-
-                # successful job -- same posture as the background git pushes
-                # in sync_all.
-                print(f"WARNING: failed to push {entry.name} to {entry.storage_uri}: {e}")
-    finally:
-        _remove_artifact_dirs(project_dir, profile)
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            # One artifact's push failing shouldn't fail an otherwise-
+            # successful job -- same posture as the background git pushes
+            # in sync_all.
+            print(f"WARNING: failed to push {name} to {target.remote_artifact}: {e}")
+            continue
+        if status == "pushed":
+            log(f"{name} changed, pushed to {target.remote_artifact}")
+        else:
+            log(f"{name} unchanged, not pushing")

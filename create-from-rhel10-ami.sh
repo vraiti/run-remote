@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Provisions a bare Red Hat RHEL 10 AMI instance into exactly the state
 # launch-instance.sh expects from the "vraiti-rhel10-cuda" AMI: NVIDIA
-# driver and the DLAMI ephemeral-NVMe mount setup. CUDA toolkit, uv, and
-# the persistent cache are no longer AMI concerns -- system.packages and
-# an "artifact" sync entry in run-remote handle those at job time instead.
+# driver, CUDA toolkit, and the DLAMI ephemeral-NVMe mount setup. Everything
+# else (uv, git, python3 headers, ...) is installed at job time by run-remote
+# (run_remote/remote_setup.py), and the persistent cache is an "artifact"
+# sync entry.
 #
 # Takes an explicit phase argument (1 or 2) -- the driver script
 # (aws_manage.py's cmd_create_raw) runs phase 1, waits for the reboot it
@@ -282,6 +283,14 @@ UNIT
 #!/usr/bin/env bash
 IDLE_TIMER_PID="/tmp/.idle-shutdown.pid"
 
+# `who` only lists sessions with a tty, so it misses non-interactive ssh
+# (e.g. a run-remote job's session). Count established connections to sshd
+# instead, and only when the timer fires, so a session opened meanwhile
+# (whose open_session raced the timer) still keeps the instance up.
+ssh_connections() {
+    ss -Htn state established '( sport = :22 )' | wc -l
+}
+
 case "$PAM_TYPE" in
     open_session)
         if [[ -f "$IDLE_TIMER_PID" ]]; then
@@ -290,8 +299,15 @@ case "$PAM_TYPE" in
         fi
         ;;
     close_session)
-        if [[ $(who | wc -l) -eq 0 ]]; then
-            (sleep 900 && /usr/sbin/shutdown -h now) &
+        # One timer at a time; it re-arms while connections remain.
+        if ! { [[ -f "$IDLE_TIMER_PID" ]] && kill -0 "$(cat "$IDLE_TIMER_PID")" 2>/dev/null; }; then
+            (
+                while sleep 900; do
+                    if [[ $(ssh_connections) -eq 0 ]]; then
+                        exec /usr/sbin/shutdown -h now
+                    fi
+                done
+            ) > /dev/null 2>&1 &
             echo $! > "$IDLE_TIMER_PID"
             disown
         fi
@@ -309,13 +325,8 @@ SCRIPT
     exit 0
 fi
 
-echo "=== Phase 2: remaining packages, verify driver ==="
-# mesa-libGL provides libGL.so.1, an import-time dependency of opencv-python
-# (pulled in by vllm-omni for its multimodal/video pipeline) that RHEL 10
-# minimal doesn't ship by default. sqlite-devel provides sqlite3.h, needed
-# to build CPython (e.g. python-tracer's cpython submodule) with sqlite
-# support.
-dnf install -y python3-pip python3-devel git mesa-libGL sqlite-devel cuda-toolkit
+echo "=== Phase 2: CUDA toolkit, verify driver ==="
+dnf install -y cuda-toolkit
 
 echo "Adding CUDA toolkit to PATH..."
 tee /etc/profile.d/cuda.sh > /dev/null <<'PROFILE'
@@ -324,17 +335,6 @@ export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PAT
 PROFILE
 chmod +x /etc/profile.d/cuda.sh
 source /etc/profile.d/cuda.sh
-
-echo "Installing uv..."
-sudo -u ec2-user bash -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
-
-echo "Installing oras..."
-ORAS_VERSION=$(curl -s https://api.github.com/repos/oras-project/oras/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
-curl -LsSf -o /tmp/oras.tar.gz "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz"
-mkdir -p /tmp/oras-install
-tar -zxf /tmp/oras.tar.gz -C /tmp/oras-install
-install -m 755 /tmp/oras-install/oras /usr/local/bin/oras
-rm -rf /tmp/oras.tar.gz /tmp/oras-install
 
 echo "Verifying NVIDIA driver..."
 nvidia-smi

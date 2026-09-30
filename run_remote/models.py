@@ -55,9 +55,10 @@ class SyncTarget(BaseModel):
     normally; git_push additionally/instead pushes <path>'s own git remote
     in the background (silently a no-op if <path> isn't actually a git repo
     or its HEAD is detached); remote_artifact makes <path> an OCI-artifact-
-    backed directory instead (pulled from storageUri before the job runs,
-    pushed back only if changed, never trusted to persist locally) -- see
-    sync.py's prepare_artifacts/sync_artifacts_back."""
+    backed directory on the remote instead (pulled there from storageUri
+    before the job runs, pushed back from there only if changed, never
+    touching the local machine) -- see sync.py's prepare_artifacts/
+    sync_artifacts_back."""
 
     rsync: bool = False
     git_push: bool = False

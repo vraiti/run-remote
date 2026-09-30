@@ -15,6 +15,11 @@ RUN dnf install -y \
         python3-pip \
         procps-ng \
         which \
+        sudo \
+        python3-devel \
+        mesa-libGL \
+        sqlite-devel \
+        oras \
     && dnf clean all \
     && ssh-keygen -A \
     && mkdir -p /var/run/sshd \

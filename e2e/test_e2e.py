@@ -1,6 +1,8 @@
 """End-to-end test: three podman-compose services -- `local`, `git-server`,
-`dev` -- on a shared compose network. `local` gets this toolset's current
-working tree at ~/.local/hack (pushed to git-server:hack) and a fresh
+`dev` -- on a shared compose network. `local` gets this repo's current
+working tree at ~/projects/run-remote (pushed to git-server:run-remote) and
+the commands package it depends on at ~/projects/commands, both installed
+editable so the run-remote console script is on PATH, and a fresh
 ~/test-repo (pushed to git-server:test-repo) with an untracked test.py.
 The test runs the .ci-tests/recipe profile from `local`, which sends the
 job to `dev` over ssh, and checks the output is exactly "hello".
@@ -16,10 +18,13 @@ import subprocess
 from pathlib import Path
 from typing import Iterator
 
+import commands
 import pytest
 
 E2E_DIR = Path(__file__).resolve().parent
-HACK_DIR = E2E_DIR.parent.parent.parent
+RUN_REMOTE_DIR = E2E_DIR.parent
+# The commands package run-remote imports, wherever it's installed locally.
+COMMANDS_DIR = Path(commands.__file__).resolve().parent
 COMPOSE_FILE = E2E_DIR / "compose.yaml"
 
 
@@ -88,28 +93,40 @@ def provisioned_stack() -> Iterator[None]:
         )
         podman_exec("local", "chmod", "600", "/root/.ssh/id_ed25519")
 
-        podman_exec("git-server", "git", "init", "-q", "--bare", "/root/git/hack.git")
+        podman_exec("git-server", "git", "init", "-q", "--bare", "/root/git/run-remote.git")
         podman_exec("git-server", "git", "init", "-q", "--bare", "/root/git/test-repo.git")
 
-        podman_exec("local", "mkdir", "-p", "/root/.local")
-        subprocess.run(["podman", "cp", str(HACK_DIR), "local:/root/.local/hack"], check=True)
+        podman_exec("local", "mkdir", "-p", "/root/projects")
+        subprocess.run(["podman", "cp", str(RUN_REMOTE_DIR), "local:/root/projects/run-remote"], check=True)
+        subprocess.run(["podman", "cp", str(COMMANDS_DIR), "local:/root/projects/commands"], check=True)
+        podman_exec(
+            "local",
+            "pip3",
+            "install",
+            "-q",
+            "--break-system-packages",
+            "-e",
+            "/root/projects/commands",
+            "-e",
+            "/root/projects/run-remote",
+        )
         podman_exec("local", "git", "config", "--global", "user.email", "e2e@example.com")
         podman_exec("local", "git", "config", "--global", "user.name", "E2E Test")
-        podman_exec("local", "git", "config", "--global", "--add", "safe.directory", "/root/.local/hack")
+        podman_exec("local", "git", "config", "--global", "--add", "safe.directory", "/root/projects/run-remote")
         podman_exec(
             "local",
             "bash",
             "-c",
-            "cd /root/.local/hack && git add -A && git commit -q -m 'e2e snapshot' --allow-empty --no-verify",
+            "cd /root/projects/run-remote && git add -A && git commit -q -m 'e2e snapshot' --allow-empty --no-verify",
         )
         podman_exec(
             "local",
             "bash",
             "-c",
-            "cd /root/.local/hack && git remote remove origin 2>/dev/null; "
-            "git remote add origin root@git-server:git/hack.git",
+            "cd /root/projects/run-remote && git remote remove origin 2>/dev/null; "
+            "git remote add origin root@git-server:git/run-remote.git",
         )
-        podman_exec("local", "bash", "-c", "cd /root/.local/hack && git push -q -u origin HEAD:refs/heads/main")
+        podman_exec("local", "bash", "-c", "cd /root/projects/run-remote && git push -q -u origin HEAD:refs/heads/main")
 
         podman_exec("local", "mkdir", "-p", "/root/test-repo")
         podman_exec("local", "bash", "-c", "cd /root/test-repo && git init -q")
@@ -140,9 +157,13 @@ def test_run_remote_sends_job_to_dev_and_prints_hello(provisioned_stack: None) -
         "-q",
         ".ci-tests/recipe",
         workdir="/root",
-        env={"PATH": "/root/.local/hack/bin:/usr/local/bin:/usr/bin:/bin"},
+        env={"PATH": "/usr/local/bin:/usr/bin:/bin"},
         check=False,
     )
     lines = [line.strip("\r") for line in result.stdout.splitlines() if line.strip()]
     assert result.returncode == 0, f"run-remote exited {result.returncode}:\n{result.stdout}"
     assert lines and lines[-1] == "hello", f"unexpected run-remote output:\n{result.stdout}"
+    # The remote's /tmp/logs (holding the worker's rrr-*.log) is pulled into
+    # $PWD/run-remote/tmp/logs when the job ends.
+    pulled = podman_exec("local", "bash", "-c", "ls /root/run-remote/tmp/logs/rrr-*.log", check=False)
+    assert pulled.returncode == 0, f"job log was not pulled back:\n{pulled.stdout}"

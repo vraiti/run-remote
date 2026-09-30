@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import hostresolve  # pylint: disable=wrong-import-position
 import recipes  # pylint: disable=wrong-import-position
+import remote_setup  # pylint: disable=wrong-import-position
 import sync  # pylint: disable=wrong-import-position
 from models import JobSpec, Profile  # pylint: disable=wrong-import-position
 
@@ -136,6 +137,7 @@ def main() -> int:  # pylint: disable=too-many-locals
     sync.check_sync_dirs_exist(project_dir, profile)
 
     alias = resolve_alias(profile)
+    remote_setup.ensure_base_packages(alias, quiet=quiet)
 
     # remote_root_template may contain a literal, unexpanded "$HOME" (the
     # default) -- resolve it against the remote's own $HOME via a plain,
@@ -148,9 +150,9 @@ def main() -> int:  # pylint: disable=too-many-locals
     remote_home = sshw.echo_env(alias, "HOME")
     venvs_root = f"{remote_home}/.venvs"
 
-    baseline_hashes = sync.prepare_artifacts(alias, remote_root, project_dir, profile, quiet=quiet)
-    sync.sync_all(alias, remote_root, project_dir, profile, quiet=quiet)
     remote_toolset_dir = sync.sync_toolset(alias)
+    baseline_hashes = sync.prepare_artifacts(alias, remote_root, remote_toolset_dir, profile, quiet=quiet)
+    sync.sync_all(alias, remote_root, project_dir, profile, quiet=quiet)
 
     # -- extra args (from the CLI) are appended after the profile's own
     # command, not a replacement for it -- e.g. `run-remote vllm-omni/pytest
@@ -185,8 +187,9 @@ def main() -> int:  # pylint: disable=too-many-locals
 
     exit_code = watch_job(alias, remote_toolset_dir, log_file, exit_file, quiet=quiet)
     # Runs regardless of the job's own exit code -- an artifact the command
-    # modified before later failing should still be pulled back and saved.
-    sync.sync_artifacts_back(alias, remote_root, remote_toolset_dir, project_dir, profile, baseline_hashes, quiet=quiet)
+    # modified before later failing should still be saved.
+    sync.sync_artifacts_back(alias, remote_root, remote_toolset_dir, profile, baseline_hashes, quiet=quiet)
+    sync.pull_logs(alias, os.getcwd(), quiet=quiet)
     return exit_code
 
 

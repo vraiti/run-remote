@@ -95,6 +95,10 @@ def try_run_instance(  # pylint: disable=too-many-arguments,too-many-positional-
             KeyName=config.KEY_NAME,
             SecurityGroupIds=[group_id],
             BlockDeviceMappings=block_device_mappings,
+            # The AMI's idle-ssh hook runs `shutdown -h now`: terminate rather
+            # than stop. Packages and venvs are cheap to rebuild on a fresh
+            # instance; only the (warm) AMI is worth keeping between jobs.
+            InstanceInitiatedShutdownBehavior="terminate",
             TagSpecifications=[
                 {
                     "ResourceType": "instance",
