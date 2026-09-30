@@ -1,0 +1,21 @@
+# mypy blocks commits on type errors; pylint is advisory (never fails the
+# commit, verbose so its findings still show). Both use language: system
+# (the environment's own mypy/pylint, carrying the project's dependencies --
+# pydantic/pyyaml/boto3 and commands) rather than pre-commit's isolated
+# per-hook envs, since pylint needs the real dependencies on its import path.
+repos:
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy --config-file pyproject.toml run_remote
+        language: system
+        files: ^run_remote/.*\.py$
+        pass_filenames: false
+      - id: pylint
+        name: pylint (non-blocking)
+        entry: bash -c 'pylint --rcfile pyproject.toml run_remote || true'
+        language: system
+        files: ^run_remote/.*\.py$
+        pass_filenames: false
+        verbose: true
